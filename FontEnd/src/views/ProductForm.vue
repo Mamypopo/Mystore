@@ -6,7 +6,7 @@
     <div class="container mt-4">
     <div class="row">
       <div class="col d-flex justify-content-start align-items-center">
-        <h3>รายการสินค้า</h3>
+        <h3>รายการสินค้า {{ getUser.username }}</h3>
       </div>
       <div class="col d-flex justify-content-end align-items-center">
         <button type="button" class="button-18" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">เพิ่มสินค้า</button>
@@ -14,11 +14,11 @@
     </div>
   </div>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div  class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">เพิ่มสินค้า</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -34,6 +34,10 @@
           <div class="mb-3">
             <label for="price" class="col-form-label">ราคาสินค้า:</label>
             <input class="form-control" type="number" v-model="product.price" id="price" required >
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="col-form-label">จำนวนสินค้า:</label>
+            <input class="form-control" type="number" v-model="product.quantity" id="quantity" required >
           </div>
           <div class="mb-3">
             <label for="image" class="col-form-label">รูปสินค้า:</label>
@@ -43,38 +47,49 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" @click=" saveProduct()" data-bs-dismiss="modal" >เพิ่มสินค้า</button>
+        <button type="submit" @click="saveProduct()" data-bs-dismiss="modal" >เพิ่มสินค้า</button>
       </div>
     </div>
   </div>
 </div>
+
+
+
+
     <table  class="table table table-striped table-hover table-responsive">
   <thead>
     <tr>
       <th scope="col">No.</th>
       <th scope="col">Name</th>
+      <th scope="col">image</th>
       <th scope="col">Description</th>
+      <th scope="col">Quantity</th>
       <th scope="col">Price</th>
       <th scope="col"></th>
       <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
-    <tr v-for="product in products" :key="product.id" >
-      <th scope="row">1</th>
+    <tr v-for="(product, index) in products" :key="product.id" >
+      <td>{{ index + 1 }}</td>
       <td>{{ product.name }}</td>
+      <td>{{ product.image }}</td>
       <td>{{ product.description }}</td>
+      <td>{{ product.quantity }}</td>
       <td>{{ product.price }}</td>
       <td><button class="button-17" @click="editProduct(product)"  data-bs-toggle="modal" data-bs-target="#edit" data-bs-whatever="@getbootstrap" >แก้ไข</button> </td>
-      <td><button class="button-16" @click="handleRemoveItem(product.id)">ลบ</button> </td>
+      <td><button class="button-16" @click="deleteProduct(product.id)">ลบ</button> </td>
+     
     </tr>
   </tbody>
+  
+
 </table>
 <div class="modal fade" id="edit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">แก้ไขสินค้า</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -90,6 +105,10 @@
           <div class="mb-3">
             <label for="price" class="col-form-label">ราคาสินค้า:</label>
             <input class="form-control" type="number" v-model="product.price" id="price" required >
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="col-form-label">จำนวนสินค้า:</label>
+            <input class="form-control" type="number" v-model="product.quantity" id="quantity" required >
           </div>
           <div class="mb-3">
             <label for="image" class="col-form-label">รูปสินค้า:</label>
@@ -110,7 +129,7 @@
 
 <script>
 import axios from 'axios';
-
+import {useUserStore} from '../stores/user.js'
 export default {
   data() {
     return {
@@ -120,12 +139,19 @@ export default {
         name: '',
         description: '',
         price: '',
-        image: null
+        image: null,
+        quantity:'',
+       
       },
     };
   },
   async created() {
     this.fetchProducts();
+  },
+  computed: {
+    getUser() {
+      return useUserStore().getUser
+    }
   },
   methods: {
     async fetchProducts() {
@@ -144,9 +170,10 @@ export default {
       formData.append('name', this.product.name);
       formData.append('description', this.product.description);
       formData.append('price', this.product.price);
+      formData.append('quantity', this.product.quantity);
       if (this.product.image) {
         formData.append('image', this.product.image);
-      }
+      } 
 
       try {
         if (this.isEditing) {
@@ -162,24 +189,21 @@ export default {
         this.fetchProducts();
         this.resetForm();
       } catch (error) {
-        console.error('Error saving product:', error.response ? error.response.data : error.message); // แสดงข้อความข้อผิดพลาด
+        console.error('Error saving product:', error.response ? error.response.data : error.message); 
       }
     },
-    handleRemoveItem(productId) {
-     
-      alert('Are you sure you want to remove this item from the cart?');
 
-    
-      this.deleteProduct(productId);
-    },
     async deleteProduct(id) {
-      alert
-      try {
-        await axios.delete(`http://localhost:8000/api/products/${id}`);
-        this.fetchProducts();
-      } catch (error) {
-        console.error('Error deleting product:', error);
-      }
+      const isConfirmed = window.confirm('Are you sure you want to remove this item from the cart?');
+
+      if (isConfirmed) {
+    try {
+      await axios.delete(`http://localhost:8000/api/products/${id}`);
+      this.fetchProducts();  
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  }
     },
     editProduct(product) {
       this.product = { ...product, image: null };

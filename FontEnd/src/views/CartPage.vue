@@ -2,14 +2,12 @@
   <div class="container">
     <div id="w">
     <header id="title">
-      <h1>Shopping Cart</h1>
+      <h1>Shopping Cart {{ getUser.id }} {{ getUser.address }}</h1>
     </header>
     <div v-if="cartItems.length === 0">
       <p>Your cart is empty.</p>
     </div>
     <div v-else>
-
-
       <div v-for="item in cartItems" :key="item.product_id" class="cart-item" >
       <table id="cart">
         <thead>
@@ -43,7 +41,8 @@
           </tr>
           <tr class="totalprice col d-flex ">
             <span class="light">Total:</span>
-            <span colspan="2"><span class="thick"> $  {{ totalPrice.toFixed(2) }} </span></span>
+            <span class="thicks">$</span><span class="thick">{{ totalPrice.toFixed(2) }}</span>
+
           </tr>
    <div class="chout">
      <button class="button-18 ">Checkout Now!</button>
@@ -55,69 +54,64 @@
 
 <script>
 import axios from 'axios';
+import { useUserStore } from "../stores/user";
 
 export default {
   data() {
     return {
-      cartItems: [],  // สินค้าในตะกร้า
+      cartItems: [],  
+      userId:'',
+      productId:'',
     };
   },
   created() {
-    this.fetchCartItems();  // เรียกดูสินค้าที่อยู่ในตะกร้าเมื่อสร้างคอมโพเนนต์
+    this.fetchCartItems();  
   },
   computed: {
     totalPrice() {
       // คำนวณผลรวมของราคาสินค้าในตะกร้า
       return this.cartItems.reduce((total, item) => total + (item.product_price * item.quantity), 35);
+    },
+    
+    getUser() {
+      return useUserStore().getUser
     }
   },
   methods: {
     async fetchCartItems() {
       try {
-        const userId = 1; // สมมติว่า userId เป็น 1 หรือคุณจะเปลี่ยนเป็นค่าอื่นก็ได้ตามความต้องการ
-
-        // ดึงข้อมูลสินค้าที่อยู่ในตะกร้าของผู้ใช้
-        const response = await axios.get(`http://localhost:8000/api/cart/${userId}`);
+        const userId = useUserStore().getUser.id 
+        const response = await axios.get(`http://localhost:8000/api/cart/${userId}`,
+        {
+          headers: { 
+            Authorization: "Bearer " + localStorage.getItem("token")
+           }
+        }
+        );
         this.cartItems = response.data;
-      } catch (error) {
+      }
+       catch (error) {
         console.error('Error fetching cart items:', error);
       }
     },
     async removeFromCart(productId) {
-      try {
-        const userId = 1; // สมมติว่า userId เป็น 1
-
-        await axios.post('http://localhost:8000/api/cart/remove', {
-          userId,
-          productId,
+    const confirmation = confirm('Are you sure you want to remove this item from the cart?');
+    if (confirmation) {
+        try {
+            const userId = useUserStore().getUser.id 
+           await axios.delete(`http://localhost:8000/api/cart/${userId}/${productId}`, {          
+          headers: { 
+            Authorization: "Bearer " + localStorage.getItem("token")
+           }      
         });
-
-        this.fetchCartItems();  // อัปเดตตะกร้าใหม่หลังจากลบสินค้า
-      } catch (error) {
-        console.error('Error removing item from cart:', error);
-      }
-    },
-    async decreaseQuantity(productId) {
-
-      try {
-        const userId = 1;
         
-        await axios.post('http://localhost:8000/api/cart/decrease', {
-          userId,
-          productId,
-          quantity: 1, // ลดจำนวนสินค้าลง 1
-        });
-
-        this.fetchCartItems();  // อัปเดตตะกร้าใหม่หลังจากลดจำนวนสินค้า
-      } catch (error) {
-        console.error('Error decreasing item quantity:', error);
-      }
-    },
-    checkout() {
-      // ฟังก์ชันการชำระเงิน สามารถเพิ่มฟังก์ชันได้ที่นี่
-      console.log('Proceed to checkout');
+        this.fetchCartItems(); 
+        } catch (error) {
+            console.error('Error deleting product from cart:', error);
+        }
     }
-  }
+  },
+}
 };
 </script>
 
@@ -255,6 +249,12 @@ tr.extracosts {
   font-weight: bold;
 }
 
+.thicks {
+  color: #272727;
+  font-size: 1.7em;
+  font-weight: bold;
+  margin-right: 10px;
+}
 
 /** submit btn **/
 tr.checkoutrow {

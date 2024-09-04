@@ -39,7 +39,7 @@ export default {
       phone_number: '',
       confirmPassword: '',
       errorMessage: '',
-      
+      role:''
     };
   },
   methods: {
@@ -54,10 +54,11 @@ export default {
           password: this.password,
           username: this.username,
           address: this.address,
-          phone_number: this.phone_number
+          phone_number: this.phone_number,
+          role: "customer",
         });
         console.log('Registration successful:', response.data);
-        this.$router.push('/login'); // เปลี่ยนเส้นทางไปหน้า login หลังจากสมัครสมาชิกสำเร็จ 
+        this.$router.push('/login'); 
       } catch (error) {
         console.error('Error registering user:', error.response.data);
       

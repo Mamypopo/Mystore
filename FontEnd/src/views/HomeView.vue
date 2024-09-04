@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
       <h1>สินค้าใหม่ที่สุด</h1>
       <div v-if="loading">กำลังโหลด...</div>
       <div v-else-if="products.length === 0">ไม่มีสินค้าใหม่</div>
@@ -23,16 +23,9 @@
         loading: true,
       };
     },
-    // async created() {
-    //   try {
-    //     const response = await axios.get('http://localhost:8000/api/products/newest');
-    //     this.products = response.data;
-    //   } catch (error) {
-    //     console.error('Error fetching newest products:', error);
-    //   } finally {
-    //     this.loading = false;
-    //   }
-    // }
+
+    
+    
   };
   </script>
   

@@ -8,10 +8,11 @@
         
         <div id="shop">
             
-            <div  v-for="product in products" :key="product.id" class="products ios apple" id="iphone-x">
+            <div  v-for="product in products" :key="product.id" class="products " id="product">
                 <img class="product-image" :src="`/uploads/${product.image}`"  >
                 <p class="product-name">{{ product.name }}</p>
                 <p class="product-description">{{ product.description }}</p>
+                <p class="product-name" >{{ product.quantity }}</p>
                 <p class="product-price" >{{ product.price }}</p>
             
                 <button type="submit" class="entypo-right-dir" @click="addToCart(product.id)">ADD TO CART</button> 
@@ -79,7 +80,7 @@
 
 <script>
 import axios from 'axios';
-
+import {useUserStore} from '../stores/user.js'
 export default {
   data() {
     return {
@@ -100,29 +101,21 @@ export default {
     async addToCart(productId) {
       try {
         const response = await axios.post('http://localhost:8000/api/cart/add', {
-          userId: 1,  //ประกาศไว่้แก้ขัด
+          userId: useUserStore().getUser.id, 
           productId,
           quantity: this.quantity
+        },{
+          headers: { 
+            Authorization: "Bearer " + localStorage.getItem("token")
+           }
         });
         console.log(response.data.message);
       } catch (error) {
         console.error('Error adding item to cart:', error);
       }
     },
-    async checkout() {
-      try {
-        
-        await axios.post(
-          'http://localhost:8000/api/cart/checkout',
-          { userId: this.userId },
-         
-        );
-        console.log('Order placed successfully');
-      } catch (error) {
-        console.error('Error placing order:', error);
-      }
-    },
-    
+
+
   }
   
   

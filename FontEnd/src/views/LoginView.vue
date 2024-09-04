@@ -7,7 +7,7 @@
     <div class="login-front">
         <header> 
         <router-link to="/login" class="active" aria-current="page" >  Sign In </router-link>
-        <router-link to="/register" class="inactive underlineHover">Sign Up </router-link>
+        <router-link to="/register-foruser" class="inactive underlineHover">Sign Up </router-link>
         </header>
         <span class="entypo-user"></span><input rules="required" type="email" id="email" v-model="email" placeholder="Email" />
         <span class="entypo-lock"></span><input rules="required" v-model="password" type="password" id="password" placeholder="Password" />
@@ -35,7 +35,7 @@ export default {
       password: '',
       errorMessage: '',
       user: null,
-      token: null
+
     };
   },
   methods: {
@@ -43,16 +43,13 @@ export default {
       try {
         const response = await axios.post('http://localhost:8000/auth/login', {
           email: this.email,
-          password: this.password
+          password: this.password,
         });
-      
-        const user = response.data.user;
+        const user = response.data.user; 
         const token = response.data.token;
         useUserStore().setUser(user);
         localStorage.setItem('token', token); 
-        console.log(token)
-        console.log(user)
-        this.$router.push('/'); // Redirect to another route
+        this.$router.push('/'); 
       } catch (error) {
         this.errorMessage = error.response.data.error || 'Login failed';
       }
