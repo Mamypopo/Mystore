@@ -6,7 +6,7 @@
     <div class="container mt-4">
     <div class="row">
       <div class="col d-flex justify-content-start align-items-center">
-        <h3>รายการสินค้า {{ getUser.username }}</h3>
+        <h3>รายการสินค้า</h3>
       </div>
       <div class="col d-flex justify-content-end align-items-center">
         <button type="button" class="button-18" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">เพิ่มสินค้า</button>
@@ -36,8 +36,8 @@
             <input class="form-control" type="number" v-model="product.price" id="price" required >
           </div>
           <div class="mb-3">
-            <label for="quantity" class="col-form-label">จำนวนสินค้า:</label>
-            <input class="form-control" type="number" v-model="product.quantity" id="quantity" required >
+            <label for="stock" class="col-form-label">จำนวนสินค้า:</label>
+            <input class="form-control" type="number" v-model="product.stock" id="stock" required >
           </div>
           <div class="mb-3">
             <label for="image" class="col-form-label">รูปสินค้า:</label>
@@ -63,7 +63,7 @@
       <th scope="col">Name</th>
       <th scope="col">image</th>
       <th scope="col">Description</th>
-      <th scope="col">Quantity</th>
+      <th scope="col">Stock</th>
       <th scope="col">Price</th>
       <th scope="col"></th>
       <th scope="col"></th>
@@ -75,7 +75,7 @@
       <td>{{ product.name }}</td>
       <td>{{ product.image }}</td>
       <td>{{ product.description }}</td>
-      <td>{{ product.quantity }}</td>
+      <td>{{ product.stock }}</td>
       <td>{{ product.price }}</td>
       <td><button class="button-17" @click="editProduct(product)"  data-bs-toggle="modal" data-bs-target="#edit" data-bs-whatever="@getbootstrap" >แก้ไข</button> </td>
       <td><button class="button-16" @click="deleteProduct(product.id)">ลบ</button> </td>
@@ -107,8 +107,8 @@
             <input class="form-control" type="number" v-model="product.price" id="price" required >
           </div>
           <div class="mb-3">
-            <label for="quantity" class="col-form-label">จำนวนสินค้า:</label>
-            <input class="form-control" type="number" v-model="product.quantity" id="quantity" required >
+            <label for="stock" class="col-form-label">จำนวนสินค้า:</label>
+            <input class="form-control" type="number" v-model="product.stock" id="stock" required >
           </div>
           <div class="mb-3">
             <label for="image" class="col-form-label">รูปสินค้า:</label>
@@ -117,8 +117,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" @click=" saveProduct()" data-bs-dismiss="modal">อัปเดตสินค้า</button>
+        <button type="button" class="button-16" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="button-17" @click="saveProduct()" data-bs-dismiss="modal">อัปเดตสินค้า</button>
       </div>
     </div>
   </div>
@@ -129,7 +129,7 @@
 
 <script>
 import axios from 'axios';
-import {useUserStore} from '../stores/user.js'
+import {useUserStore} from '../stores/userStore.js'
 export default {
   data() {
     return {
@@ -140,7 +140,7 @@ export default {
         description: '',
         price: '',
         image: null,
-        quantity:'',
+        stock:'',
        
       },
     };
@@ -170,15 +170,18 @@ export default {
       formData.append('name', this.product.name);
       formData.append('description', this.product.description);
       formData.append('price', this.product.price);
-      formData.append('quantity', this.product.quantity);
+      formData.append('stock', this.product.stock);
       if (this.product.image) {
         formData.append('image', this.product.image);
       } 
 
       try {
+        const token = localStorage.getItem('token');
         if (this.isEditing) {
           await axios.put(`http://localhost:8000/api/products/${this.product.id}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: {
+                    Authorization: token
+                }
           });
           this.isEditing = false;
         } else {

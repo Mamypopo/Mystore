@@ -32,14 +32,14 @@ export const getProduct = async(req, res) => {
 
 export const addProduct = async(req, res) => {
     try {
-        const { name, description, price, quantity } = req.body;
+        const { name, description, price, stock } = req.body;
         const image = req.file ? req.file.filename : null;
 
-        if (!name || !description || !price || !quantity) {
-            return res.status(400).json({ error: 'Name, description, quantity ,and price are required' });
+        if (!name || !description || !price || !stock) {
+            return res.status(400).json({ error: 'Name, description, stock ,and price are required' });
         }
 
-        const newProduct = { name, description, price, image, quantity };
+        const newProduct = { name, description, price, image, stock };
         const productId = await createProduct(newProduct);
         res.status(201).json({ id: productId });
     } catch (error) {
@@ -50,7 +50,7 @@ export const addProduct = async(req, res) => {
 export const editProduct = async(req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, price, quantity } = req.body;
+        const { name, description, price, stock } = req.body;
         const image = req.file ? req.file.filename : req.body.existingImage;
 
         const product = await getProductById(id);
@@ -65,7 +65,7 @@ export const editProduct = async(req, res) => {
             }
         }
 
-        const updatedProduct = { name, description, quantity, price, image };
+        const updatedProduct = { name, description, stock, price, image };
         await updateProduct(id, updatedProduct);
         res.json({ message: 'Product updated successfully' });
     } catch (error) {

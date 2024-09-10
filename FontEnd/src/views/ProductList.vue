@@ -2,26 +2,27 @@
 
   <section>
     <div class="container">
-        <h1>Product</h1>  
-        
-        <!-- <button id='cart-button' class="trigger cart-button-style">Show Cart</button> -->
-        
+      
+        <h1>Product</h1>      
         <div id="shop">
-            
-            <div  v-for="product in products" :key="product.id" class="products " id="product">
+            <div   v-for="product in products" :key="product.id" class="products " id="product">
                 <img class="product-image" :src="`/uploads/${product.image}`"  >
                 <p class="product-name">{{ product.name }}</p>
                 <p class="product-description">{{ product.description }}</p>
-                <p class="product-name" >{{ product.quantity }}</p>
-                <p class="product-price" >{{ product.price }}</p>
-            
-                <button type="submit" class="entypo-right-dir" @click="addToCart(product.id)">ADD TO CART</button> 
-         
-            </div>
-           
-        
+                <p  class="product-name" >{{ product.stock }} </p> 
+                <p  class="product-price" >{{ product.price }}</p>
+      <!-- <button type="submit" class="entypo-right-dir  " @click="addToCart(product.id)" :disabled="quantity > product.stock || quantity <= 0" >ADD TO CART</button> -->
+     <!-- Quantity Control -->
      
-            
+      <button   @click="incrementQuantity(product)" :disabled="product.quantity >= product.stock">+</button>
+ <span>{{ product.quantity }}</span>
+      <button @click="decrementQuantity(product)" :disabled="product.quantity <= 1">-</button>
+      <button 
+        @click="addToCart(product)" 
+        :disabled="product.stock <= 0">
+        Add to Cart
+      </button>
+            </div>        
         </div>
         
     </div>
@@ -80,38 +81,71 @@
 
 <script>
 import axios from 'axios';
-import {useUserStore} from '../stores/user.js'
+import {useUserStore} from '../stores/userStore.js'
 export default {
   data() {
     return {
       products: [],  // รายการสินค้าจะถูกบันทึกที่นี่\
-       quantity: 1
+      quantity: 1,
     };
   },
-
+ 
   async created() {
     try {
       const response = await axios.get('http://localhost:8000/api/products');
-      this.products = response.data;
+      this.products = response.data.map(product => ({
+        ...product,
+        quantity: 1 
+      }));
     } catch (error) {
       console.error('Error fetching products:', error);
     }
   },
+  
   methods: {
-    async addToCart(productId) {
+    incrementQuantity(product) {
+      // เพิ่มปริมาณสินค้า
+      if (product.quantity < product.stock) {
+        product.quantity++;
+      }
+    },
+
+    decrementQuantity(product) {
+      // ลดปริมาณสินค้า
+      if (product.quantity > 1) {
+        product.quantity--;
+      }
+    },
+
+
+    async addToCart(product ) {
       try {
-        const response = await axios.post('http://localhost:8000/api/cart/add', {
+        const token = localStorage.getItem('token'); // ดึง token จาก localStorage
+        if (!token) {
+          alert('Please log in first');
+          return;
+        }
+        const response =  await axios.post('http://localhost:8000/api/cart/add', {
           userId: useUserStore().getUser.id, 
-          productId,
-          quantity: this.quantity
+          productId: product.id,
+          quantity: product.quantity
+
         },{
           headers: { 
             Authorization: "Bearer " + localStorage.getItem("token")
            }
         });
-        console.log(response.data.message);
+   
+        if (response.data.status === 'Sold Out') {
+          alert('This product is sold out!');
+        } else {
+          alert('Product added to cart successfully!');
+          location.reload();
+          product.quantity = 1;
+        }
       } catch (error) {
-        console.error('Error adding item to cart:', error);
+        console.error('Error adding product to cart:', error);
+        alert('Error adding product to cart. Please try again.');
       }
     },
 
@@ -177,4 +211,15 @@ button:active {
   border-radius: 4px;
   border: none;
 }
+
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+
+
+
 </style>

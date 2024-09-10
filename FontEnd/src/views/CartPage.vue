@@ -2,7 +2,7 @@
   <div class="container">
     <div id="w">
     <header id="title">
-      <h1>Shopping Cart {{ getUser.id }} {{ getUser.address }}</h1>
+      <h1>Shopping Cart {{ getUser.id }} {{ getUser.address }} {{ getUser.email }}</h1>
     </header>
     <div v-if="cartItems.length === 0">
       <p>Your cart is empty.</p>
@@ -54,11 +54,12 @@
 
 <script>
 import axios from 'axios';
-import { useUserStore } from "../stores/user";
+import { useUserStore } from "../stores/userStore.js";
 
 export default {
   data() {
     return {
+      userProfile:[],
       cartItems: [],  
       userId:'',
       productId:'',
@@ -67,6 +68,7 @@ export default {
   created() {
     this.fetchCartItems();  
   },
+  
   computed: {
     totalPrice() {
       // คำนวณผลรวมของราคาสินค้าในตะกร้า
@@ -75,10 +77,13 @@ export default {
     
     getUser() {
       return useUserStore().getUser
-    }
+    },
+  
   },
+  
   methods: {
     async fetchCartItems() {
+      
       try {
         const userId = useUserStore().getUser.id 
         const response = await axios.get(`http://localhost:8000/api/cart/${userId}`,
@@ -88,7 +93,9 @@ export default {
            }
         }
         );
+       
         this.cartItems = response.data;
+        
       }
        catch (error) {
         console.error('Error fetching cart items:', error);
@@ -111,6 +118,18 @@ export default {
         }
     }
   },
+
+   async getProfile() {
+            try {
+                const response = await axios.get('http://localhost:8000/api/auth/getprofile', {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                });
+                
+                this.userProfile = response.data;
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+        },
 }
 };
 </script>

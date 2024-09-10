@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterForAdmin from '../views/RegisterForAdmin.vue';
 import RegisterForUser from '../views/RegisterForUser.vue';
-import { useUserStore } from '../stores/user';
+import { useUserStore } from '../stores/userStore.js';
 import ProductList from '@/views/ProductList.vue';
 import ProductForm from '@/views/ProductForm.vue';
 import CartPage from '@/views/CartPage.vue';
@@ -19,7 +19,8 @@ const router = createRouter({
         {
             path: '/login',
             name: 'login',
-            component: LoginView
+            component: LoginView,
+            meta: { requiresGuest: true }
         },
         {
             path: '/register-foruser',
@@ -40,7 +41,7 @@ const router = createRouter({
             path: '/products/new',
             name: 'create-product',
             component: ProductForm,
-            // meta: { requiresAuth: true }
+            meta: { requiresAuth: true }
         },
         {
             path: '/products/edit/:id',
@@ -53,13 +54,14 @@ const router = createRouter({
             path: '/cart',
             name: 'cart-product',
             component: CartPage,
-            // meta: { requiresAuth: true }
+            meta: { requiresAuth: true }
         },
 
     ]
 });
 
 router.beforeEach(async(to, from, next) => {
+
     try {
         const token = localStorage.getItem('token');
 
@@ -71,7 +73,16 @@ router.beforeEach(async(to, from, next) => {
             });
             useUserStore().setUser(response.data.user)
         }
-        next();
+        
+        if (to.matched.some(record => record.meta.requiresAuth) && !token) {
+            // ถ้าหน้าต้องการการล็อกอินและผู้ใช้ไม่มี token
+            next(from.path); // เปลี่ยนเส้นทางไปยังหน้า login
+        } else if (to.matched.some(record => record.meta.requiresGuest) && token) {
+            // ถ้าหน้าต้องการให้ผู้ใช้ยังไม่ล็อกอินและผู้ใช้มี token
+            next('/'); // เปลี่ยนเส้นทางไปยังหน้า Home หรือหน้าที่ผู้ใช้ควรจะเห็น
+        } else {
+            next(); // ไปยังเส้นทางที่กำหนด
+        }
     } catch (error) {
         if (axios.isAxiosError(error)) {
             if (error.response) {
@@ -84,5 +95,6 @@ router.beforeEach(async(to, from, next) => {
         }
         next('/');
     }
+  
 })
 export default router;

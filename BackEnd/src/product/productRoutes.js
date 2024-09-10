@@ -9,6 +9,7 @@ import {
     deleteProduct,
 
 } from './productController.js';
+// import { authenticateToken } from '../auth/authMiddleware.js'
 
 const router = express.Router();
 

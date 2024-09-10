@@ -23,6 +23,14 @@ export const getUserByUsername = async(username) => {
     return rows[0]; // ส่งคืนข้อมูลของผู้ใช้ที่พบ
 };
 
+export const getUserById = async (userId) => {
+    try {
+        const [rows] = await pool.query('SELECT id, username, email FROM users WHERE id = ?', [userId]);
+        return rows.length > 0 ? rows[0] : null;
+    } catch (error) {
+        throw error;
+    }
+};
 // ฟังก์ชันในการตรวจสอบรหัสผ่าน
 export const verifyPassword = async(inputPassword, hashedPassword) => {
     return bcrypt.compare(inputPassword, hashedPassword); // ตรวจสอบความถูกต้องของรหัสผ่าน

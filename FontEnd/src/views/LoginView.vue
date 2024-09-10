@@ -26,9 +26,10 @@
 </template>
 <script>
 import axios from 'axios';
-import { useUserStore } from "../stores/user";
+import { useUserStore } from '../stores/userStore.js';
 
 export default {
+  name: 'LoginView',
   data() {
     return {
       email: '',
@@ -40,12 +41,13 @@ export default {
   },
   methods: {
     async login() {
+     
       try {
         const response = await axios.post('http://localhost:8000/auth/login', {
           email: this.email,
           password: this.password,
         });
-        const user = response.data.user; 
+        const user  = response.data.user; 
         const token = response.data.token;
         useUserStore().setUser(user);
         localStorage.setItem('token', token); 

@@ -3,14 +3,11 @@ import { defineStore } from 'pinia';
 export const useUserStore = defineStore('user', {
     state() {
         return {
-            user: {
-                id: 0,
-                email: '',
-                username: '',
-                address: '',
-                phone_number: '',
-                role: ''
-            },
+            id: 0,
+            email: '',
+            password: '',
+            role: '',
+            phone: '',
         }
     },
     getters: {
@@ -26,11 +23,10 @@ export const useUserStore = defineStore('user', {
             this.user = {
                 id: 0,
                 email: '',
-                username: '',
-                address: '',
-                phone_number: '',
-                role: ''
-            }
+                password: '',
+                role: '',
+                phone: '',
+              }
         }
     }
 });
