@@ -1,48 +1,63 @@
 @import './base.css';
 @import url('https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&subset=devanagari,latin-ext');
-
 .navbar {
-    background-color: #bbc4ce; /* สีพื้นหลังของ navbar */
+    background-color: #bbc4ce;
+    /* สีพื้นหลังของ navbar */
     position: sticky;
     top: 0;
     z-index: 1000;
-  }
-  
-  .navbar-nav {
+}
+
+.navbar-nav {
     display: flex;
-    align-items: center; /* จัดแนวให้กลางในแนวตั้ง */
-  }
-  
-  .navbar-collapse {
+    align-items: center;
+    /* จัดแนวให้กลางในแนวตั้ง */
+}
+
+.navbar-collapse {
     display: flex;
-    justify-content: space-between; /* ช่องว่างระหว่างกลุ่ม */
-    width: 100%; /* ให้เต็มพื้นที่ */
-  }
-  
-  /* ใช้ mx-auto เพื่อจัดให้ items อยู่กลาง */
-  .mx-auto {
+    justify-content: space-between;
+    /* ช่องว่างระหว่างกลุ่ม */
+    width: 100%;
+    /* ให้เต็มพื้นที่ */
+}
+
+
+/* ใช้ mx-auto เพื่อจัดให้ items อยู่กลาง */
+
+.mx-auto {
     margin-left: auto;
     margin-right: auto;
-  }
-  
-  /* ปรับให้ nav-link ดูเหมาะสม */
-  .nav-link {
-    color: #000; /* สีของลิงก์ */
-    text-decoration: none; /* ไม่ให้มีเส้นใต้ */
-  }
-  
-  /* ปรับให้ลิงก์ไม่ขยับเมื่อเลื่อนเมาส์ */
-  .nav-link:hover {
-    text-decoration: underline; /* เส้นใต้เมื่อเลื่อนเมาส์ */
-  }
-  /* Responsive adjustments */
-  @media (max-width: 991.98px) {
-    .navbar-nav {
-      justify-content: flex-start;
-    }
-  }
+}
 
-  :root {
+
+/* ปรับให้ nav-link ดูเหมาะสม */
+
+.nav-link {
+    color: #000;
+    /* สีของลิงก์ */
+    text-decoration: none;
+    /* ไม่ให้มีเส้นใต้ */
+}
+
+
+/* ปรับให้ลิงก์ไม่ขยับเมื่อเลื่อนเมาส์ */
+
+.nav-link:hover {
+    text-decoration: underline;
+    /* เส้นใต้เมื่อเลื่อนเมาส์ */
+}
+
+
+/* Responsive adjustments */
+
+@media (max-width: 991.98px) {
+    .navbar-nav {
+        justify-content: flex-start;
+    }
+}
+
+ :root {
     --text-01: #45413E;
     --light-01: #F9F9F9;
     --light-02: #FFFFFF;
@@ -52,12 +67,9 @@
     --card-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
     --hover-timing: all 0.2s ease;
     --nav-card-size: 240px;
-
     -webkit-font-smoothing: antialiased;
     font-smoothing: antialiased;
     scroll-behavior: smooth;
-
-
 }
 
 * {
@@ -70,12 +82,9 @@ body {
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     transition: var(--hover-timing);
-
     background: var(--light-01);
-	
-	width: 100vw;
-	overflow-x: hidden;
-
+    width: 100vw;
+    overflow-x: hidden;
 }
 
 header {
@@ -97,9 +106,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-
 }
-
 
 
 /* CSS */
@@ -929,4 +936,3 @@ header {
     transition: background .5s;
     border-radius: 4px;
 }
-
