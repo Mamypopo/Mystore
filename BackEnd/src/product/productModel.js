@@ -30,12 +30,12 @@ export const deleteProductById = async(id) => {
     await pool.query('DELETE FROM products WHERE id = ?', [id]);
 };
 
-export const updateProductStock = async (productId, newStock) => {
+export const updateProductStock = async(productId, newStock) => {
     await pool.query('UPDATE products SET stock = ? WHERE id = ?', [newStock, productId]);
 };
 
 
-export const updateProductStockbefor = async (productId, quantity) => {
+export const updateProductStockbefor = async(productId, quantity) => {
 
     await pool.query('UPDATE products SET stock = stock + ? WHERE id = ?', [quantity, productId]);
 };
