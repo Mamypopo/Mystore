@@ -36,6 +36,6 @@ export const updateProductStock = async (productId, newStock) => {
 
 
 export const updateProductStockbefor = async (productId, quantity) => {
-    // เพิ่ม stock ขึ้นตามจำนวนที่คืนจาก cart
+
     await pool.query('UPDATE products SET stock = stock + ? WHERE id = ?', [quantity, productId]);
 };
