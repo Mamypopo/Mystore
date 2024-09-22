@@ -70,6 +70,52 @@ nav {
     transition: all 200ms linear;
 }
 
+:root {
+    --text-01: #45413E;
+    --light-01: #F9F9F9;
+    --light-02: #FFFFFF;
+    --brand-01: #DB7F67;
+    --brand-02: #F4CFC6;
+    --card-hover: 0px 4px 24px rgba(0, 0, 0, 0.15);
+    --card-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    --hover-timing: all 0.2s ease;
+    --nav-card-size: 240px;
+
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    scroll-behavior: smooth;
+
+
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+
+header {
+    /*    width: 100%;*/
+    height: auto;
+    position: sticky;
+    top: 0;
+    /*    border: 1px solid red;*/
+    z-index: 100;
+}
+
+.banner {
+    background: var(--brand-01);
+    color: var(--light-01);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
 
 /* CSS */
 
