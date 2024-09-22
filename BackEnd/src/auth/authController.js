@@ -57,7 +57,6 @@ export const login = async(req, res) => {
 export const getProfile = async(req, res, next) => {
     try {
         const user = req.user
-        console.log(user)
         res.status(200).send({
             user
         });

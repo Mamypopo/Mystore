@@ -73,7 +73,9 @@
     <tr v-for="(product, index) in products" :key="product.id" >
       <td>{{ index + 1 }}</td>
       <td>{{ product.name }}</td>
-      <td>{{ product.image }}</td>
+     <td>
+      <img :src="`http://localhost:8000/uploads/${product.image}`" class="image-form">
+     </td> 
       <td>{{ product.description }}</td>
       <td>{{ product.stock }}</td>
       <td>{{ product.price }}</td>
@@ -112,7 +114,7 @@
           </div>
           <div class="mb-3">
             <label for="image" class="col-form-label">รูปสินค้า:</label>
-            <input class="form-control" type="file" @change="handleFileChange" id="image" >
+            <input class="form-control" type="file"  @change="handleFileChange" id="image" >
           </div>
         </form>
       </div>
@@ -231,5 +233,11 @@ h1{
 
 button{
   margin-bottom: 10px;
+}
+
+
+.image-form{
+  width: 100px;
+  height: 100px;
 }
 </style>

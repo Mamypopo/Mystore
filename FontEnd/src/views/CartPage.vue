@@ -5,7 +5,7 @@
       <h1>Shopping Cart {{ getUser.id }} {{ getUser.address }} {{ getUser.email }}</h1>
     </header>
     <div v-if="cartItems.length === 0">
-      <p>Your cart is empty.</p>
+      <p class="fs-5 text-xl-center p-md-2">Your cart is empty.</p>
     </div>
     <div v-else>
       <div v-for="item in cartItems" :key="item.product_id" class="cart-item" >
@@ -16,6 +16,7 @@
             <th class="second">Qty</th>
             <th class="third">Product</th>
             <th class="fourth">Price</th>
+            <th class="fourth">total</th>
           </tr>
         </thead>
         <tbody>
@@ -25,6 +26,7 @@
             <td>{{ item.product_name }}</td>
             <td  v-if="typeof item.product_price === 'number'" >${{ item.product_price.toFixed(2) }}</td>
             <td v-else >{{ item.product_price }}</td>
+            <td>Total: {{ item.product_price * item.quantity }}</td>
             <button class="button-16" @click="removeFromCart(item.product_id)">Remove</button>
           </tr>
         </tbody>
@@ -34,22 +36,32 @@
     
     </div>
           <tr class="extracosts col d-flex ">
-            <td class="light">Shipping &amp; Tax</td>
+            <td class="light ">Shipping &amp; Tax</td>
             <td colspan="2" class="light"></td>
             <td>$35.00</td>
             <td>&nbsp;</td>
           </tr>
           <tr class="totalprice col d-flex ">
             <span class="light">Total:</span>
-            <span class="thicks">$</span><span class="thick">{{ totalPrice.toFixed(2) }}</span>
-
+            <span class="thicks">$</span><span class="thick">  {{ totalPrice }} </span> 
           </tr>
    <div class="chout">
-     <button class="button-18 ">Checkout Now!</button>
+     <button class="button-18 " @click="placeOrder" >Checkout Now!</button>
    </div>
-        
+  
   </div>
+  <div v-if="orderReceipt">
+  <h2>Order Receipt</h2>
+  <p>Order ID: {{ orderReceipt.orderId }}</p>
+  <p>Total Amount: {{ orderReceipt.total_amount }}</p>
+  <ul>
+    <li v-for="item in orderItems" :key="item.product_id">
+      {{ item.product_name }} - {{ item.quantity }} x {{ item.price }}
+    </li>
+  </ul>
+</div>
   </div>
+  
 </template>
 
 <script>
@@ -63,27 +75,26 @@ export default {
       cartItems: [],  
       userId:'',
       productId:'',
+      totalAmount: 0,
+      orderReceipt: null,
+      orderItems: []
     };
   },
-  created() {
+  async  created() {
     this.fetchCartItems();  
   },
   
-  computed: {
-    totalPrice() {
-      // คำนวณผลรวมของราคาสินค้าในตะกร้า
-      return this.cartItems.reduce((total, item) => total + (item.product_price * item.quantity), 35);
-    },
-    
+  computed: {    
     getUser() {
       return useUserStore().getUser
     },
-  
+    totalPrice() {
+      return this.cartItems.reduce((total, item) => total + (item.product_price * item.quantity), 35);
+    }
   },
   
   methods: {
     async fetchCartItems() {
-      
       try {
         const userId = useUserStore().getUser.id 
         const response = await axios.get(`http://localhost:8000/api/cart/${userId}`,
@@ -91,11 +102,8 @@ export default {
           headers: { 
             Authorization: "Bearer " + localStorage.getItem("token")
            }
-        }
-        );
-       
+        });
         this.cartItems = response.data;
-        
       }
        catch (error) {
         console.error('Error fetching cart items:', error);
@@ -123,13 +131,40 @@ export default {
             try {
                 const response = await axios.get('http://localhost:8000/api/auth/getprofile', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-                });
-                
+                });  
                 this.userProfile = response.data;
             } catch (error) {
                 console.error('Error fetching user profile:', error);
             }
         },
+        async placeOrder() {
+            const userId = useUserStore().getUser.id 
+            try {
+                const response = await axios.post('http://localhost:8000/api/orders', {
+                    userId,
+                    // items: this.cartItems
+                    items: this.cartItems.map(item => ({ product_id: item.product_id, quantity: item.quantity }))
+                });
+                this.orderReceipt = response.data;
+                console.log('Order placed:', response.data);
+                await this.fetchOrderReceipt(this.orderReceipt.orderId);
+                this.cartItems = [];
+                // location.reload(); 
+            } catch (error) {
+                console.error('Error placing order:', error);
+            }
+        },
+        async fetchOrderReceipt(orderId) {
+  try {
+    const response = await axios.get(`http://localhost:8000/api/orders/${orderId}/receipt`);
+    this.orderItems = response.data; // ต้องตรวจสอบว่า response.data มีข้อมูลที่คุณต้องการ
+    console.log('Fetched Order Items:', this.orderItems); // ดูข้อมูลใน console
+  } catch (error) {
+    console.error('Error fetching receipt:', error);
+  }
+}
+     
+   
 }
 };
 </script>

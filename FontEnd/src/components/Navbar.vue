@@ -58,6 +58,7 @@ export default {
     logout() {
       useUserStore().resetUser()
       localStorage.removeItem('token');
+      location.reload(); 
       this.$router.push('/');
     }
   }

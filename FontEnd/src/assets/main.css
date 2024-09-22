@@ -70,23 +70,7 @@ nav {
     transition: all 200ms linear;
 }
 
-:root {
-    --text-01: #45413E;
-    --light-01: #F9F9F9;
-    --light-02: #FFFFFF;
-    --brand-01: #DB7F67;
-    --brand-02: #F4CFC6;
-    --card-hover: 0px 4px 24px rgba(0, 0, 0, 0.15);
-    --card-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-    --hover-timing: all 0.2s ease;
-    --nav-card-size: 240px;
 
-    -webkit-font-smoothing: antialiased;
-    font-smoothing: antialiased;
-    scroll-behavior: smooth;
-
-
-}
 
 * {
     box-sizing: border-box;
@@ -210,6 +194,73 @@ header {
 }
 
 
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.product-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    background-color: #fff;
+    transition: box-shadow 0.3s ease;
+    height: 520px;
+}
+
+.product-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.product-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.product-description {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.product-stock {
+    font-size: 0.9em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+
+
+
 /* =============================== Fonts ====================================*/
 
 
@@ -237,7 +288,6 @@ header {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Widgets grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.shop,
 .profile {
     border-radius: 6px;
     position: relative;
@@ -253,12 +303,7 @@ header {
     background: #f6f6f6;
 }
 
-.shop {
-    width: 100%;
-    height: 200px;
-    background: #f6f6f6;
-    margin-top: 30px;
-}
+
 
 
 /* Column right */

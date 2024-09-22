@@ -7,6 +7,8 @@ import userRoutes from './user/userRoutes.js';
 import authRoutes from './auth/authRoutes.js';
 import cartRoutes from './cart/cartRoutes.js';
 import productRoutes from './product/productRoutes.js';
+import orderRoutes from './order/orderRoutes.js';
+
 import { fileURLToPath } from 'url';
 
 dotenv.config(); // โหลด .env
@@ -44,6 +46,7 @@ const storage = multer.diskStorage({
 app.use('/api/products', productRoutes);
 app.use('/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api', orderRoutes);
 
 
 

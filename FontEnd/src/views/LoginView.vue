@@ -51,7 +51,8 @@ export default {
         const token = response.data.token;
         useUserStore().setUser(user);
         localStorage.setItem('token', token); 
-        this.$router.push('/'); 
+        this.$router.push('/');
+        location.reload(); 
       } catch (error) {
         this.errorMessage = error.response.data.error || 'Login failed';
       }
