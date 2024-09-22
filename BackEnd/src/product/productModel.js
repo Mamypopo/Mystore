@@ -33,3 +33,9 @@ export const deleteProductById = async(id) => {
 export const updateProductStock = async (productId, newStock) => {
     await pool.query('UPDATE products SET stock = ? WHERE id = ?', [newStock, productId]);
 };
+
+
+export const updateProductStockbefor = async (productId, quantity) => {
+    // เพิ่ม stock ขึ้นตามจำนวนที่คืนจาก cart
+    await pool.query('UPDATE products SET stock = stock + ? WHERE id = ?', [quantity, productId]);
+};

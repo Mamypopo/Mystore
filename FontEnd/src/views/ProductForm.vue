@@ -46,8 +46,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" @click="saveProduct()" data-bs-dismiss="modal" >เพิ่มสินค้า</button>
+        <button type="button" class="button-16" data-bs-dismiss="modal">Close</button>
+        <button type="submit" @click="saveProduct()"  class="button-18" data-bs-dismiss="modal" >เพิ่มสินค้า</button>
       </div>
     </div>
   </div>
