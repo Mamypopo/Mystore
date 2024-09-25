@@ -5,7 +5,7 @@
       
     <div class="container-fluid">
      
-      <a class="navbar-brand" href="/">LoGo</a>
+      <router-link to="/" class="navbar-brand" >LoGo</router-link>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -20,6 +20,9 @@
             </li>
             <li class="nav-item">
               <router-link to="/products/new" class="nav-link">Add Product</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/receipt" class="nav-link">Receipt</router-link>
             </li>
           </ul>
           <ul class="navbar-nav">

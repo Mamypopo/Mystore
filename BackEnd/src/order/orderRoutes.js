@@ -1,16 +1,14 @@
 import express from 'express';
-import { getOrders, getOrderDetails , } from './orderModel.js';
-import { handleOrder ,getOrderSlip, fetchOrderReceipt  } from './orderController.js';
+import { } from './orderModel.js';
+import { handleOrder ,  getOrderDetails ,  getOrderHistory,   } from './orderController.js';
 
 
 const router = express.Router();
 
-
-// Order Routes
-router.get('/orders', getOrders);
-router.get('/orders/:orderId', getOrderDetails);
+//เส้นสั่งซื้อ
 router.post('/orders', handleOrder);
-router.get('/orders/:id/slip', getOrderSlip);
-router.get('/orders/:orderId/receipt', fetchOrderReceipt);
+// ดึงข้อมูลคำสั่งซื้อ
+router.get('/:orderId', getOrderDetails);
+router.get('/history/:userId', getOrderHistory); // เส้นทางที่ถูกต้อง
 
 export default router;

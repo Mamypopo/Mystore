@@ -50,16 +50,6 @@
    </div>
   
   </div>
-  <div v-if="orderReceipt">
-  <h2>Order Receipt</h2>
-  <p>Order ID: {{ orderReceipt.orderId }}</p>
-  <p>Total Amount: {{ orderReceipt.total_amount }}</p>
-  <ul>
-    <li v-for="item in orderItems" :key="item.product_id">
-      {{ item.product_name }} - {{ item.quantity }} x {{ item.price }}
-    </li>
-  </ul>
-</div>
   </div>
   
 </template>
@@ -143,28 +133,20 @@ export default {
                 const response = await axios.post('http://localhost:8000/api/orders', {
                     userId,
                     // items: this.cartItems
-                    items: this.cartItems.map(item => ({ product_id: item.product_id, quantity: item.quantity }))
+                    items: this.cartItems.map(item => ({ product_id: item.product_id, quantity: item.quantity })),
+                    email: this.userEmail, // อีเมลของผู้ใช้
                 });
-                this.orderReceipt = response.data;
+                this.receipt = response.data.orderDetails; // เก็บข้อมูลใบเสร็จ
+               
+                
                 console.log('Order placed:', response.data);
-                await this.fetchOrderReceipt(this.orderReceipt.orderId);
+               
                 this.cartItems = [];
                 // location.reload(); 
             } catch (error) {
                 console.error('Error placing order:', error);
             }
-        },
-        async fetchOrderReceipt(orderId) {
-  try {
-    const response = await axios.get(`http://localhost:8000/api/orders/${orderId}/receipt`);
-    this.orderItems = response.data; // ต้องตรวจสอบว่า response.data มีข้อมูลที่คุณต้องการ
-    console.log('Fetched Order Items:', this.orderItems); // ดูข้อมูลใน console
-  } catch (error) {
-    console.error('Error fetching receipt:', error);
-  }
-}
-     
-   
+        }, 
 }
 };
 </script>

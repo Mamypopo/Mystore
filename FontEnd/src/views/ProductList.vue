@@ -7,7 +7,8 @@
             <img :src="`http://localhost:8000/uploads/${product.image}`" alt="Product Image" class="product-image">
             <p class="product-name">{{ product.name }}</p>
             <p class="product-description">{{ product.description }}</p>
-            <p class="product-stock">Stock: {{ product.stock }}</p>
+            <p v-if="product.stock > 0" class="product-stock">Stock: {{ product.stock }}</p>
+            <p v-else class="out-of-stock">สินค้าหมด</p>
             <p class="product-price">{{ product.price }}</p>
 
             <div class="quantity-controls">

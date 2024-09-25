@@ -40,3 +40,10 @@ export const verifyPassword = async(inputPassword, hashedPassword) => {
 export const generateToken = (user) => {
     return jwt.sign({ id: user.id, username: user.username, email: user.email, }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
+
+
+export async function getUserEmail(userId) {
+    const query = 'SELECT email FROM users WHERE id = ?';
+    const [result] = await pool.query(query, [userId]);
+    return result[0]?.email; // ตรวจสอบให้แน่ใจว่ามีการคืนค่าอีเมลที่ถูกต้อง
+  }

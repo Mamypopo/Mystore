@@ -8,6 +8,7 @@ import ProductList from '@/views/ProductList.vue';
 import ProductForm from '@/views/ProductForm.vue';
 import CartPage from '@/views/CartPage.vue';
 import axios from 'axios';
+import ReceiptPage from '@/views/ReceiptPage.vue';
 const router = createRouter({
     history: createWebHistory(
         import.meta.env.BASE_URL),
@@ -56,6 +57,13 @@ const router = createRouter({
             component: CartPage,
             meta: { requiresAuth: true }
         },
+        {
+            path: '/receipt',
+            name: 'Receipt-page',
+            component: ReceiptPage,
+            meta: { requiresAuth: true }
+        },
+
 
     ]
 });

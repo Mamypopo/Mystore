@@ -51,20 +51,19 @@ export const editProduct = async(req, res) => {
     try {
         const { id } = req.params;
         const { name, description, price, stock } = req.body;
-        const image = req.file ? req.file.filename : req.body.existingImage;
+        // เช็คว่ามีไฟล์อัปโหลดใหม่หรือไม่
+        let image = req.file ? req.file.filename : null;
 
-        const product = await getProductById(id);
-        if (!product) {
-            return res.status(404).json({ error: 'Product not found' });
+        // ดึงข้อมูลสินค้าจาก Model
+        const existingProduct = await getProductById(id);
+        if (!existingProduct) {
+            return res.status(404).json({ message: 'Product not found' });
         }
 
-        if (req.file && product.image) {
-            const oldImagePath = path.join(path.resolve(), 'uploads', product.image);
-            if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath);
-            }
+        // ถ้าไม่มีไฟล์ใหม่ที่อัปโหลด ให้ใช้รูปเดิม
+        if (!image) {
+            image = existingProduct.image;
         }
-
         const updatedProduct = { name, description, stock, price, image };
         await updateProduct(id, updatedProduct);
         res.json({ message: 'Product updated successfully' });

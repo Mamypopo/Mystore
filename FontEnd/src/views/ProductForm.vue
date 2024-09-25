@@ -77,7 +77,10 @@
       <img :src="`http://localhost:8000/uploads/${product.image}`" class="image-form">
      </td> 
       <td>{{ product.description }}</td>
-      <td>{{ product.stock }}</td>
+      <td><p v-if="product.stock > 0" class="product-stock">Stock: {{ product.stock }}
+
+      </p>
+       <p v-else class="out-of-stock">สินค้าหมด</p></td>
       <td>{{ product.price }}</td>
       <td><button class="button-17" @click="editProduct(product)"  data-bs-toggle="modal" data-bs-target="#edit" data-bs-whatever="@getbootstrap" >แก้ไข</button> </td>
       <td><button class="button-16" @click="deleteProduct(product.id)">ลบ</button> </td>
