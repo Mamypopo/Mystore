@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import { getUserEmail } from '../user/userModel.js'; // ฟังก์ชันดึงอีเมลผู้ใช้
-import { placeOrder ,getOrdersByUserId,getOrderById } from './orderModel.js';
+import { placeOrder ,getOrdersByUserId, getOrderDetailsById } from './orderModel.js';
 import { getProductById } from '../product/productModel.js'
 
 
@@ -42,23 +42,23 @@ export const handleOrder = async (req, res) => {
 };
 
 
-// ฟังก์ชันดึงข้อมูลคำสั่งซื้อ
-export const getOrderDetails = async (req, res) => {
-    const { orderId } = req.params;
+// // ฟังก์ชันดึงข้อมูลคำสั่งซื้อ
+// export const getOrderDetails = async (req, res) => {
+//     const { orderId } = req.params;
     
-    try {
-        // ดึงข้อมูลคำสั่งซื้อและสินค้า
-        const orderDetails = await getOrderById(orderId);
-        if (!orderDetails.order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
+//     try {
+//         // ดึงข้อมูลคำสั่งซื้อและสินค้า
+//         const orderDetails = await getOrderById(orderId);
+//         if (!orderDetails.order) {
+//             return res.status(404).json({ message: 'Order not found' });
+//         }
 
-        res.json(orderDetails);
-    } catch (error) {
-        console.error('Error fetching order details:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
-};
+//         res.json(orderDetails);
+//     } catch (error) {
+//         console.error('Error fetching order details:', error);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// };
 
 
 
@@ -106,26 +106,28 @@ export const sendReceipt = async (email, orderDetails) => {
     }
 };
 
-export const getOrderHistory = async (req, res) => {
-    const userId = req.params.userId; // ดึง userId จาก URL
+
+export const getOrderDetails = async (req, res) => {
+    const orderId = req.params.orderId; // ดึง orderId จาก URL
 
     try {
-        const orders = await getOrdersByUserId(userId);
-        res.json(orders); // ส่งกลับข้อมูลคำสั่งซื้อ
+        const orderDetails = await getOrderDetailsById(orderId);
+        res.json(orderDetails); // ส่งกลับรายละเอียดคำสั่งซื้อ
     } catch (error) {
-        console.error('Error fetching order history:', error.message);
+        console.error('Error fetching order details:', error.message);
         res.status(500).json({ message: error.message });
     }
 };
 
-// export const getOrderDetails = async (req, res) => {
-//     const orderId = req.params.orderId; // ดึง orderId จาก URL
 
-//     try {
-//         const orderDetails = await getOrderDetailsById(orderId);
-//         res.json(orderDetails); // ส่งกลับรายละเอียดคำสั่งซื้อ
-//     } catch (error) {
-//         console.error('Error fetching order details:', error.message);
-//         res.status(500).json({ message: error.message });
-//     }
-// };
+export const getOrderHistory = async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const orders = await getOrdersByUserId(userId);
+        res.json(orders);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching order history');
+    }
+};

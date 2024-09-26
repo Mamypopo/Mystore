@@ -6,9 +6,9 @@ import { handleOrder ,  getOrderDetails ,  getOrderHistory,   } from './orderCon
 const router = express.Router();
 
 //เส้นสั่งซื้อ
-router.post('/orders', handleOrder);
+router.post('/', handleOrder);
 // ดึงข้อมูลคำสั่งซื้อ
 router.get('/:orderId', getOrderDetails);
-router.get('/history/:userId', getOrderHistory); // เส้นทางที่ถูกต้อง
+router.get('/history/:userId', getOrderHistory);
 
 export default router;

@@ -1,8 +1,8 @@
 <template >
  <section>
 
-  
-  <div class="container" >
+  <form @submit.prevent="login">
+    <div class="container" >
   <div class="login">
     <div class="login-front">
         <header> 
@@ -22,6 +22,8 @@
     </div>
   </div>
   </div>
+  </form>
+  
   </section>
 </template>
 <script>
@@ -39,24 +41,25 @@ export default {
 
     };
   },
+ 
   methods: {
     async login() {
-     
-      try {
+    try {
         const response = await axios.post('http://localhost:8000/auth/login', {
-          email: this.email,
-          password: this.password,
+            email: this.email,
+            password: this.password,
         });
-        const user  = response.data.user; 
+        const userData = response.data.user; // เก็บข้อมูลผู้ใช้
+        const userStore = useUserStore(); // เข้าถึง userStore
+        userStore.setUser(userData); // เก็บข้อมูลผู้ใช้ลงใน state
+        console.log('User logged in:', userStore.getUser); // ตรวจสอบค่าใน console
         const token = response.data.token;
-        useUserStore().setUser(user);
-        localStorage.setItem('token', token); 
+        localStorage.setItem('token', token);
         this.$router.push('/');
-        location.reload(); 
-      } catch (error) {
+    } catch (error) {
         this.errorMessage = error.response.data.error || 'Login failed';
-      }
     }
+}
   }
 };
 </script>

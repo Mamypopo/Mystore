@@ -2,7 +2,7 @@
   <div class="container">
     <div id="w">
     <header id="title">
-      <h1>Shopping Cart {{ getUser.id }} {{ getUser.address }} {{ getUser.email }}</h1>
+      <h1>Shopping Cart </h1>
     </header>
     <div v-if="cartItems.length === 0">
       <p class="fs-5 text-xl-center p-md-2">Your cart is empty.</p>

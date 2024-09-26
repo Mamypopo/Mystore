@@ -8,7 +8,7 @@ import ProductList from '@/views/ProductList.vue';
 import ProductForm from '@/views/ProductForm.vue';
 import CartPage from '@/views/CartPage.vue';
 import axios from 'axios';
-import ReceiptPage from '@/views/ReceiptPage.vue';
+import HistoryPage from '@/views/HistoryPage.vue';
 const router = createRouter({
     history: createWebHistory(
         import.meta.env.BASE_URL),
@@ -58,9 +58,9 @@ const router = createRouter({
             meta: { requiresAuth: true }
         },
         {
-            path: '/receipt',
-            name: 'Receipt-page',
-            component: ReceiptPage,
+            path: '/history',
+            name: 'history-page',
+            component: HistoryPage,
             meta: { requiresAuth: true }
         },
 
@@ -80,6 +80,7 @@ router.beforeEach(async(to, from, next) => {
                 }
             });
             useUserStore().setUser(response.data.user)
+            
         }
         
         if (to.matched.some(record => record.meta.requiresAuth) && !token) {

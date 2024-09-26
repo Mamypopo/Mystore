@@ -35,27 +35,41 @@ export const placeOrder = async (userId, items) => {
     return orderId;
 };
 
-// ฟังก์ชันดึงข้อมูลคำสั่งซื้อและรายละเอียดสินค้า
-export const getOrderById = async (orderId) => {
-    const [order] = await pool.query(`SELECT * FROM orders WHERE id = ?`, [orderId]);
-    const [items] = await pool.query(`
-        SELECT oi.*, p.name 
-        FROM order_items oi 
-        JOIN products p ON oi.product_id = p.id 
-        WHERE oi.order_id = ?`,
-        [orderId]
-    );
-    return { order: order[0], items };
-};
 
 
-export const getOrdersByUserId = async (userId) => {
-    const [rows] = await pool.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
-    return rows; // ส่งกลับข้อมูลคำสั่งซื้อ
-};
+
+// export const getOrdersByUserId = async (userId) => {
+//     const [rows] = await pool.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+//     return rows; // ส่งกลับข้อมูลคำสั่งซื้อ
+// };
 
 
 export const getOrderDetailsById = async (orderId) => {
     const [rows] = await pool.query('SELECT * FROM order_items WHERE order_id = ?', [orderId]);
     return rows; // ส่งกลับรายละเอียดของคำสั่งซื้อนั้น ๆ
+};
+
+
+export const getOrdersByUserId = async (userId) => {
+    const [orders] = await pool.query(`
+        SELECT id, total_amount, created_at
+        FROM orders
+        WHERE user_id = ?
+    `, [userId]);
+
+    const orderDetails = await Promise.all(orders.map(async (order) => {
+        const [items] = await pool.query(`
+            SELECT oi.quantity, p.name, p.price, p.image 
+            FROM order_items oi
+            JOIN products p ON oi.product_id = p.id
+            WHERE oi.order_id = ?
+        `, [order.id]);
+        
+        return {
+            ...order,
+            items,
+        };
+    }));
+
+    return orderDetails;
 };

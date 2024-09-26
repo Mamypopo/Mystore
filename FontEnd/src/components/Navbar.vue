@@ -22,7 +22,7 @@
               <router-link to="/products/new" class="nav-link">Add Product</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/receipt" class="nav-link">Receipt</router-link>
+              <router-link to="/history" class="nav-link">history</router-link>
             </li>
           </ul>
           <ul class="navbar-nav">

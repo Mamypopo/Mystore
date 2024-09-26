@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'; // ใช้สำหรับสร้าง JW
 
 // ฟังก์ชันในการสร้างผู้ใช้ใหม่
 export const createUser = async(username, email, password, address, phone_number, role) => {
+
     const hashedPassword = await bcrypt.hash(password, 10); // เข้ารหัสรหัสผ่าน
     const [result] = await pool.query(
         'INSERT INTO users (username, email, password, address, phone_number ,role) VALUES (?, ?, ?, ?, ?, ?)', [username, email, hashedPassword, address, phone_number, role]
@@ -12,11 +13,10 @@ export const createUser = async(username, email, password, address, phone_number
 };
 
 // ฟังก์ชันในการค้นหาผู้ใช้โดยอีเมล
-export const getUserByEmail = async(email) => {
-    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
-    return rows[0]; // ส่งคืนข้อมูลของผู้ใช้ที่พบ
+export const getUserByEmail = async (email) => {
+    const [rows] = await pool.query('SELECT id, email, password, role, phone_number FROM users WHERE email = ?', [email]);
+    return rows[0]; // คืนค่าผู้ใช้ที่ตรงตามอีเมล
 };
-
 // ฟังก์ชันในการค้นหาผู้ใช้โดยชื่อผู้ใช้
 export const getUserByUsername = async(username) => {
     const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);

@@ -1,4 +1,4 @@
-import { createUser, getUserByEmail, verifyPassword, generateToken,getUserById  } from '../user/userModel.js';
+import { createUser, getUserByEmail, verifyPassword, generateToken  } from '../user/userModel.js';
 
 // ฟังก์ชันสำหรับการลงทะเบียนผู้ใช้ใหม่
 export const register = async(req, res) => {
@@ -65,3 +65,5 @@ export const getProfile = async(req, res, next) => {
         next(error);
     }
 };
+
+
