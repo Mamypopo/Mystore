@@ -2,7 +2,7 @@
   <div class="container">
     <div id="w">
     <header id="title">
-      <h1>Shopping Cart </h1>
+      <h1>Shopping Cart {{ getUser }} </h1>
     </header>
     <div v-if="cartItems.length === 0">
       <p class="fs-5 text-xl-center p-md-2">Your cart is empty.</p>
@@ -66,7 +66,6 @@ export default {
       userId:'',
       productId:'',
       totalAmount: 0,
-      orderReceipt: null,
       orderItems: []
     };
   },
@@ -94,6 +93,7 @@ export default {
            }
         });
         this.cartItems = response.data;
+        
       }
        catch (error) {
         console.error('Error fetching cart items:', error);
@@ -103,7 +103,7 @@ export default {
     const confirmation = confirm('Are you sure you want to remove this item from the cart?');
     if (confirmation) {
         try {
-            const userId = useUserStore().getUser.id 
+           const userId = useUserStore().getUser.id 
            await axios.delete(`http://localhost:8000/api/cart/${userId}/${productId}`, {          
           headers: { 
             Authorization: "Bearer " + localStorage.getItem("token")

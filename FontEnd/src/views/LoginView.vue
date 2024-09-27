@@ -49,10 +49,9 @@ export default {
             email: this.email,
             password: this.password,
         });
-        const userData = response.data.user; // เก็บข้อมูลผู้ใช้
+        const user = response.data.user; // เก็บข้อมูลผู้ใช้
         const userStore = useUserStore(); // เข้าถึง userStore
-        userStore.setUser(userData); // เก็บข้อมูลผู้ใช้ลงใน state
-        console.log('User logged in:', userStore.getUser); // ตรวจสอบค่าใน console
+        userStore.setUser(user); // เก็บข้อมูลผู้ใช้ลงใน state    
         const token = response.data.token;
         localStorage.setItem('token', token);
         this.$router.push('/');

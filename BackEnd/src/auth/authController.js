@@ -45,6 +45,7 @@ export const login = async(req, res) => {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
 
+        // console.log('login user' , user)
         // สร้างและส่งคืน JWT
         const token = generateToken(user);
         res.json({ token, user });
@@ -57,6 +58,7 @@ export const login = async(req, res) => {
 export const getProfile = async(req, res, next) => {
     try {
         const user = req.user
+      
         res.status(200).send({
             user
         });

@@ -80,7 +80,6 @@ router.beforeEach(async(to, from, next) => {
                 }
             });
             useUserStore().setUser(response.data.user)
-            
         }
         
         if (to.matched.some(record => record.meta.requiresAuth) && !token) {

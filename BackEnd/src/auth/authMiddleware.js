@@ -7,6 +7,7 @@ export const authenticateToken = (req, res, next) => {
     try {
         const verified = jwt.verify(notb, process.env.JWT_SECRET);
         req.user = verified;
+        console.log(verified)
         next();
     } catch (err) {
         res.status(400).json({ message: 'Invalid Token' });
