@@ -14,7 +14,7 @@ body,
     font-weight: 400;
 }
 
-::selection {
+/* ::selection {
     color: #fff;
     background-color: #ffffff;
 }
@@ -22,7 +22,7 @@ body,
 ::-moz-selection {
     color: #fff;
     background-color: #ffffff;
-}
+} */
 
 li {
     list-style-type: none;
@@ -37,11 +37,11 @@ nav {
 }
 
 .nav-item:hover .nav-link {
-    color: #ffffff !important;
+    color: #747474 !important;
 }
 
 .nav-item.active .nav-link {
-    color: #ffffff !important;
+    color: #7a7a7a !important;
 }
 
 .nav-item:after {

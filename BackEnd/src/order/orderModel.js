@@ -36,23 +36,15 @@ export const placeOrder = async (userId, items) => {
 };
 
 
-
-
-// export const getOrdersByUserId = async (userId) => {
-//     const [rows] = await pool.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
-//     return rows; // ส่งกลับข้อมูลคำสั่งซื้อ
-// };
-
-
 export const getOrderDetailsById = async (orderId) => {
     const [rows] = await pool.query('SELECT * FROM order_items WHERE order_id = ?', [orderId]);
-    return rows; // ส่งกลับรายละเอียดของคำสั่งซื้อนั้น ๆ
+    return rows; 
 };
 
 
 export const getOrdersByUserId = async (userId) => {
     const [orders] = await pool.query(`
-        SELECT id, total_amount, created_at
+        SELECT id, total_amount, created_at , status
         FROM orders
         WHERE user_id = ?
     `, [userId]);
@@ -72,4 +64,38 @@ export const getOrdersByUserId = async (userId) => {
     }));
 
     return orderDetails;
+};
+
+// export const getAllOrders = async () => {
+//     try {
+//       const [results] = await pool.query('SELECT * FROM orders ORDER BY created_at DESC');
+//       return results;
+//     } catch (err) {
+//       console.error('Error fetching all orders:', err);
+//       throw err; // ปล่อยข้อผิดพลาดเพื่อให้ controller จัดการ
+//     }
+//   };
+
+export const getAllOrders = async () => {
+    const [orders] = await pool.query(`
+      SELECT o.id AS order_id, o.total_amount, o.created_at, 
+             u.id AS user_id, u.username, u.email,  o.status
+      FROM orders o
+      JOIN users u ON o.user_id = u.id
+    `);
+    return orders;
+  };
+
+
+  export const updateOrderStatus = async (orderId, status) => {
+    const [result] = await pool.query(`
+      UPDATE orders SET status = ? WHERE id = ?
+    `, [status, orderId]);
+  
+    return result;
+  };
+  
+export const getOrderById = async (orderId) => {
+    const [order] = await pool.query(`SELECT * FROM orders WHERE id = ?`, [orderId]);
+    return order[0];
 };

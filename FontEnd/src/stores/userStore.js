@@ -11,6 +11,7 @@ export const useUserStore = defineStore('user', {
             address:'',
             role: '',
             phone_number: '',
+            profileImage: '',
         };
     },
     getters: {
@@ -21,7 +22,8 @@ export const useUserStore = defineStore('user', {
                 username: this.username, 
                 address: this.address, 
                 role: this.role, 
-                phone_number:this.phone_number 
+                phone_number:this.phone_number,
+                profileImage:this.profileImage 
             };
         }
     },
@@ -33,6 +35,8 @@ export const useUserStore = defineStore('user', {
             this.address = user.address;
             this.role = user.role;
             this.phone_number = user.phone_number;
+            this.profileImage = user.profileImage;
+
         },
         resetUser() {
             this.id = 0;
@@ -42,6 +46,8 @@ export const useUserStore = defineStore('user', {
             this.address='';
             this.role = '';
             this.phone_number = '';
-        }
+            this.profileImage= null;
+
+        },
     }
 });

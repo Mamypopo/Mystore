@@ -37,8 +37,6 @@ export default {
       email: '',
       password: '',
       errorMessage: '',
-      user: null,
-
     };
   },
  
@@ -54,6 +52,7 @@ export default {
         userStore.setUser(user); // เก็บข้อมูลผู้ใช้ลงใน state    
         const token = response.data.token;
         localStorage.setItem('token', token);
+
         this.$router.push('/');
     } catch (error) {
         this.errorMessage = error.response.data.error || 'Login failed';

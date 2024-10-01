@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import { getUserEmail } from '../user/userModel.js'; // ฟังก์ชันดึงอีเมลผู้ใช้
-import { placeOrder ,getOrdersByUserId, getOrderDetailsById } from './orderModel.js';
+import * as orderModel from './orderModel.js';
 import { getProductById } from '../product/productModel.js'
 
 
@@ -21,7 +21,7 @@ export const handleOrder = async (req, res) => {
         }
 
          // สร้างคำสั่งซื้อ  // บันทึกใบเสร็จ
-        const result = await placeOrder(userId, items, totalAmount);
+        const result = await orderModel.placeOrder(userId, items, totalAmount);
 
         console.log('Total Amount before sending email:', totalAmount); // ตรวจสอบค่าที่นี่
          // ส่งอีเมลใบเสร็จ
@@ -41,24 +41,6 @@ export const handleOrder = async (req, res) => {
     }
 };
 
-
-// // ฟังก์ชันดึงข้อมูลคำสั่งซื้อ
-// export const getOrderDetails = async (req, res) => {
-//     const { orderId } = req.params;
-    
-//     try {
-//         // ดึงข้อมูลคำสั่งซื้อและสินค้า
-//         const orderDetails = await getOrderById(orderId);
-//         if (!orderDetails.order) {
-//             return res.status(404).json({ message: 'Order not found' });
-//         }
-
-//         res.json(orderDetails);
-//     } catch (error) {
-//         console.error('Error fetching order details:', error);
-//         res.status(500).json({ message: 'Server error' });
-//     }
-// };
 
 
 
@@ -111,7 +93,7 @@ export const getOrderDetails = async (req, res) => {
     const orderId = req.params.orderId; // ดึง orderId จาก URL
 
     try {
-        const orderDetails = await getOrderDetailsById(orderId);
+        const orderDetails = await orderModel.getOrderDetailsById(orderId);
         res.json(orderDetails); // ส่งกลับรายละเอียดคำสั่งซื้อ
     } catch (error) {
         console.error('Error fetching order details:', error.message);
@@ -124,10 +106,48 @@ export const getOrderHistory = async (req, res) => {
     const userId = req.params.userId;
 
     try {
-        const orders = await getOrdersByUserId(userId);
+        const orders = await orderModel.getOrdersByUserId(userId);
         res.json(orders);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error fetching order history');
+        res.status(500).json({ message: 'Error retrieving orders by user ID', error: error.message });
     }
 };
+
+
+export const fetchOrders = async (req, res) => {
+    try {
+      const orders = await orderModel.getAllOrders();
+      res.json(orders);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      res.status(500).json({ message: 'Error retrieving orders', error: error.message });
+    }
+  };
+
+  export const fetchUserOrders = async (req, res) => {
+    const userId = req.params.id;
+    try {
+      const orders = await orderModel.getOrdersByUserId(userId);
+      res.json(orders);
+    } catch (error) {
+      console.error('Error fetching user orders:', error);
+      res.status(500).json({ error: 'Failed to fetch user orders' });
+    }
+  };
+
+
+  export const modifyOrderStatus = async (req, res) => {
+    const { orderId, status } = req.body;
+    try {
+      const success = await orderModel.updateOrderStatus(orderId, status);
+      if (success) {
+        res.status(200).json({ message: 'Order status updated successfully' });
+      } else {
+        res.status(404).json({ message: 'Order not found' });
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      res.status(500).json({ message: 'Error updating order status' });
+    }
+  };

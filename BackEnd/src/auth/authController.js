@@ -1,10 +1,15 @@
 import { createUser, getUserByEmail, verifyPassword, generateToken  } from '../user/userModel.js';
 
+import multer from 'multer';
+
+export const storage = multer.memoryStorage();
+export const upload = multer({ storage: storage });
 // ฟังก์ชันสำหรับการลงทะเบียนผู้ใช้ใหม่
 export const register = async(req, res) => {
     const { username, email, password, address, phone_number, role } = req.body;
-
-    if (!username || !email || !password || !address || !phone_number || !role) {
+    const profileImage = req.file ? req.file.filename : null; // รับไฟล์รูปโปรไฟล์ถ้ามี
+     console.log('Received values:', { username, phone_number, address,  profileImage });
+    if (!username || !email || !password || !address || !phone_number || !profileImage || !role) {
         return res.status(400).json({ error: 'Username, email, password, address, and phone number are required' });
     }
     try {
@@ -13,10 +18,10 @@ export const register = async(req, res) => {
         if (existingUser) {
             return res.status(400).json({ error: 'Email already exists' });
         }
-
-
+        
         // สร้างผู้ใช้ใหม่
-        const userId = await createUser(username, email, password, address, phone_number, role);
+        const userId = await createUser(username, email, password, address, phone_number, profileImage, role);
+       
         res.status(201).json({ message: 'User registered successfully', userId });
     } catch (error) {
         console.error(error);

@@ -8,7 +8,8 @@ import ProductList from '@/views/ProductList.vue';
 import ProductForm from '@/views/ProductForm.vue';
 import CartPage from '@/views/CartPage.vue';
 import axios from 'axios';
-import HistoryPage from '@/views/HistoryPage.vue';
+import UserPage from '@/views/UserPage.vue';
+import AdminOrderDashboard from '@/views/AdminOrderDashboard.vue';
 const router = createRouter({
     history: createWebHistory(
         import.meta.env.BASE_URL),
@@ -57,14 +58,17 @@ const router = createRouter({
             component: CartPage,
             meta: { requiresAuth: true }
         },
+    
         {
-            path: '/history',
-            name: 'history-page',
-            component: HistoryPage,
-            meta: { requiresAuth: true }
-        },
-
-
+            path: '/user-page',
+            name: 'UserPage',
+            component: UserPage,
+          },
+          {
+            path: '/admin-order-dashboard',
+            name: 'AdminPage',
+            component: AdminOrderDashboard,
+          },
     ]
 });
 
@@ -84,7 +88,7 @@ router.beforeEach(async(to, from, next) => {
         
         if (to.matched.some(record => record.meta.requiresAuth) && !token) {
             // ถ้าหน้าต้องการการล็อกอินและผู้ใช้ไม่มี token
-            next(from.path); // เปลี่ยนเส้นทางไปยังหน้า login
+            next('/'); // เปลี่ยนเส้นทางไปยังหน้า login
         } else if (to.matched.some(record => record.meta.requiresGuest) && token) {
             // ถ้าหน้าต้องการให้ผู้ใช้ยังไม่ล็อกอินและผู้ใช้มี token
             next('/'); // เปลี่ยนเส้นทางไปยังหน้า Home หรือหน้าที่ผู้ใช้ควรจะเห็น

@@ -18,7 +18,7 @@ app.set('view engine', 'ejs');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(userRoutes);
+
 
 
 // ตั้งค่า storage สำหรับ multer
@@ -43,6 +43,7 @@ const storage = multer.diskStorage({
 
 
 // ใช้ routes
+app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/auth', authRoutes);
 app.use('/api/cart', cartRoutes);

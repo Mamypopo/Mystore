@@ -1,155 +1,176 @@
 <template>
   <div class="container">
     <div id="w">
-    <header id="title">
-      <h1>Shopping Cart {{ getUser }} </h1>
-    </header>
-    <div v-if="cartItems.length === 0">
-      <p class="fs-5 text-xl-center p-md-2">Your cart is empty.</p>
+      <header id="title">
+        <h1>Shopping Cart</h1>
+      </header>
+      <div v-if="cartItems.length === 0">
+        <p class="fs-5 text-xl-center p-md-2">Your cart is empty.</p>
+      </div>
+      <div v-else>
+        <table id="cart">
+          <thead>
+            <tr>
+              <th class="first">Photo</th>
+              <th class="second">Qty</th>
+              <th class="third">Product</th>
+              <th class="fourth">Price</th>
+              <th class="fourth">Total</th>
+              <th class="fifth">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in cartItems" :key="item.product_id" class="productitm">
+              <td><img :src="item.product_image_url" alt="Product Image" class="product-image" /></td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.product_name }}</td>
+              <td v-if="typeof item.product_price === 'number'">${{ item.product_price.toFixed(2) }}</td>
+              <td v-else>{{ item.product_price }}</td>
+              <td>${{ (item.product_price * item.quantity).toFixed(2) }}</td>
+              <td>
+                <button class="button-16" @click="removeFromCart(item.product_id)">Remove</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <tr class="extracosts col d-flex">
+        <td class="light">Shipping & Tax</td>
+        <td colspan="2" class="light"></td>
+        <td>$35.00</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr class="totalprice col d-flex">
+        <span class="light">Total:</span>
+        <span class="thicks">$</span><span class="thick">{{ totalPrice }}</span>
+      </tr>
+      <div class="chout">
+        <button class="button-18" @click="placeOrder">Checkout Now!</button>
+      </div>
     </div>
-    <div v-else>
-      <div v-for="item in cartItems" :key="item.product_id" class="cart-item" >
-      <table id="cart">
-        <thead>
-          <tr>
-            <th class="first">Photo</th>
-            <th class="second">Qty</th>
-            <th class="third">Product</th>
-            <th class="fourth">Price</th>
-            <th class="fourth">total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="productitm">
-            <td><img :src="item.product_image_url" alt="Product Image" class="product-image"></td>
-            <td>{{ item.quantity }}</td>
-            <td>{{ item.product_name }}</td>
-            <td  v-if="typeof item.product_price === 'number'" >${{ item.product_price.toFixed(2) }}</td>
-            <td v-else >{{ item.product_price }}</td>
-            <td>Total: {{ item.product_price * item.quantity }}</td>
-            <button class="button-16" @click="removeFromCart(item.product_id)">Remove</button>
-          </tr>
-        </tbody>
-      </table>
-      
-    </div>
-    
-    </div>
-          <tr class="extracosts col d-flex ">
-            <td class="light ">Shipping &amp; Tax</td>
-            <td colspan="2" class="light"></td>
-            <td>$35.00</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr class="totalprice col d-flex ">
-            <span class="light">Total:</span>
-            <span class="thicks">$</span><span class="thick">  {{ totalPrice }} </span> 
-          </tr>
-   <div class="chout">
-     <button class="button-18 " @click="placeOrder" >Checkout Now!</button>
-   </div>
-  
   </div>
-  </div>
-  
 </template>
+
 
 <script>
 import axios from 'axios';
 import { useUserStore } from "../stores/userStore.js";
+import Swal from 'sweetalert2';
 
 export default {
   data() {
     return {
-      userProfile:[],
-      cartItems: [],  
-      userId:'',
-      productId:'',
+      userProfile: [],
+      cartItems: [],
+      userId: '',
       totalAmount: 0,
-      orderItems: []
     };
   },
-  async  created() {
-    this.fetchCartItems();  
+  async created() {
+    this.fetchCartItems();
   },
-  
-  computed: {    
+  computed: {
     getUser() {
-      return useUserStore().getUser
+      return useUserStore().getUser;
     },
     totalPrice() {
-      return this.cartItems.reduce((total, item) => total + (item.product_price * item.quantity), 35);
+      return this.cartItems.reduce((total, item) => total + (item.product_price * item.quantity), 35).toFixed(2);
     }
   },
-  
   methods: {
     async fetchCartItems() {
       try {
-        const userId = useUserStore().getUser.id 
-        const response = await axios.get(`http://localhost:8000/api/cart/${userId}`,
-        {
-          headers: { 
+        const userId = useUserStore().getUser.id;
+        const response = await axios.get(`http://localhost:8000/api/cart/${userId}`, {
+          headers: {
             Authorization: "Bearer " + localStorage.getItem("token")
-           }
+          }
         });
         this.cartItems = response.data;
-        
-      }
-       catch (error) {
+      } catch (error) {
         console.error('Error fetching cart items:', error);
+        Swal.fire('ผิดพลาด!', 'ไม่สามารถดึงข้อมูลตะกร้าได้.', 'error');
       }
     },
     async removeFromCart(productId) {
-    const confirmation = confirm('Are you sure you want to remove this item from the cart?');
-    if (confirmation) {
-        try {
-           const userId = useUserStore().getUser.id 
-           await axios.delete(`http://localhost:8000/api/cart/${userId}/${productId}`, {          
-          headers: { 
-            Authorization: "Bearer " + localStorage.getItem("token")
-           }      
-        });
-        
-        this.fetchCartItems(); 
-        } catch (error) {
-            console.error('Error deleting product from cart:', error);
-        }
-    }
-  },
+      const itemToRemove = this.cartItems.find(item => item.product_id === productId);
+      const result = await Swal.fire({
+        title: 'ยืนยันการลบสินค้า?',
+        text: `คุณต้องการลบสินค้า ${itemToRemove.product_name} จำนวณ ${itemToRemove.quantity} ชิ้น จากตะกร้าหรือไม่?`,     
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'ตกลง',
+        cancelButtonText: 'ยกเลิก'
+      });
 
-   async getProfile() {
-            try {
-                const response = await axios.get('http://localhost:8000/api/auth/getprofile', {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-                });  
-                this.userProfile = response.data;
-            } catch (error) {
-                console.error('Error fetching user profile:', error);
+      if (result.isConfirmed) {
+        try {
+          const userId = useUserStore().getUser.id;
+          await axios.delete(`http://localhost:8000/api/cart/${userId}/${productId}`, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token")
             }
-        },
-        async placeOrder() {
-            const userId = useUserStore().getUser.id 
-            try {
-                const response = await axios.post('http://localhost:8000/api/orders', {
-                    userId,
-                    // items: this.cartItems
-                    items: this.cartItems.map(item => ({ product_id: item.product_id, quantity: item.quantity })),
-                    email: this.userEmail, // อีเมลของผู้ใช้
-                });
-                this.receipt = response.data.orderDetails; // เก็บข้อมูลใบเสร็จ
-               
-                
-                console.log('Order placed:', response.data);
-               
-                this.cartItems = [];
-                // location.reload(); 
-            } catch (error) {
-                console.error('Error placing order:', error);
-            }
-        }, 
-}
+          });
+          Swal.fire('สำเร็จ!', `สินค้า ${itemToRemove.product_name} ถูกลบออกจากตะกร้าเรียบร้อยแล้ว!`, 'success');
+          this.fetchCartItems();
+        } catch (error) {
+          console.error('Error deleting product from cart:', error);
+          Swal.fire('ผิดพลาด!', 'ไม่สามารถลบสินค้าได้.', 'error');
+        }
+      }
+    },
+    async placeOrder() {
+  const userId = useUserStore().getUser.id;
+  if (this.cartItems.length === 0) {
+    Swal.fire('ไม่มีสินค้าในตะกร้า!', 'กรุณาเพิ่มสินค้าก่อนทำการสั่งซื้อ.', 'warning');
+    return;
+  }
+  const orderDetails = this.cartItems.map(item => 
+    `ชื่อสินค้า: ${item.product_name} จำนวน: ${item.quantity} ชิ้น`
+  ).join('\n');
+
+  const result = await Swal.fire({
+    title: 'ยืนยันการสั่งซื้อ',
+        text: `คุณต้องการสั่งซื้อสินค้าดังต่อไปนี้:\n${orderDetails}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'ตกลง',
+        cancelButtonText: 'ยกเลิก'
+      });
+      if(result.isConfirmed){
+        try {
+    const response = await axios.post('http://localhost:8000/api/orders', {
+      userId,
+      items: this.cartItems.map(item => ({ product_id: item.product_id, quantity: item.quantity })),
+      email: this.userProfile.email,
+    });
+    
+    console.log('Order placed:', response.data);
+    
+    
+    const orderDetails = this.cartItems.map(item => 
+      `ชื่อสินค้า: ${item.product_name}, จำนวน: ${item.quantity}`
+    ).join('\n');
+    
+    Swal.fire({
+      title: 'สั่งซื้อเรียบร้อย!',
+      text: `คุณได้ทำการสั่งซื้อสินค้าดังต่อไปนี้:\n${orderDetails}`,
+      icon: 'success',
+      confirmButtonText: 'ตกลง'
+    });
+
+    this.cartItems = []; 
+  } catch (error) {
+    console.error('Error placing order:', error);
+    Swal.fire('ผิดพลาด!', 'ไม่สามารถทำการสั่งซื้อได้.', 'error');
+  }
+      }
+  
+},
+  }
 };
 </script>
+
 
 <style>
 .chout{

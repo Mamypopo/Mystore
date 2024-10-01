@@ -33,6 +33,7 @@
 <script>
 import axios from 'axios';
 import {useUserStore} from '../stores/userStore.js'
+import Swal from 'sweetalert2';
 export default {
   data() {
     return {
@@ -69,36 +70,45 @@ export default {
     },
 
 
-    async addToCart(product ) {
-      try {
-        const token = localStorage.getItem('token'); // ดึง token จาก localStorage
-        if (!token) {
-          alert('Please log in first');
-          return;
-        }
-        const response =  await axios.post('http://localhost:8000/api/cart/add', {
-          userId: useUserStore().getUser.id, 
-          productId: product.id,
-          quantity: product.quantity
+    async addToCart(product) {
+  const result = await Swal.fire({
+    title: 'ยืนยันการเพิ่มสินค้า?',
+    text: `คุณต้องการเพิ่มสินค้า ${product.name} จำนวน ${product.quantity} ชิ้น ลงในตะกร้าหรือไม่?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'ตกลง',
+    cancelButtonText: 'ยกเลิก'
+  });
 
-        },{
-          headers: { 
-            Authorization: "Bearer " + localStorage.getItem("token")
-           }
-        });
-   
-        if (response.data.status === 'Sold Out') {
-          alert('This product is sold out!');
-        } else {
-          alert('Product added to cart successfully!');
-          location.reload();
-          product.quantity = 1;
-        }
-      } catch (error) {
-        console.error('Error adding product to cart:', error);
-        alert('Error adding product to cart. Please try again.');
+  if (result.isConfirmed) {
+    try {
+      const token = localStorage.getItem('token'); // ดึง token จาก localStorage
+      if (!token) {
+        alert('Please log in first');
+        return;
       }
-    },
+      const response = await axios.post('http://localhost:8000/api/cart/add', {
+        userId: useUserStore().getUser.id,
+        productId: product.id,
+        quantity: product.quantity
+      }, {
+        headers: { 
+          Authorization: "Bearer " + token
+        }
+      });
+
+      if (response.data.status === 'Sold Out') {
+        alert('สินค้านี้หมดแล้ว!');
+      } else {
+        Swal.fire('สำเร็จ!', `สินค้า "${product.name}" จำนวน ${product.quantity} ถูกเพิ่มลงในตะกร้าเรียบร้อยแล้ว!`, 'success');
+        product.quantity = 1; // รีเซ็ตจำนวนสินค้าเป็น 1
+      }
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      Swal.fire('ผิดพลาด!', 'ไม่สามารถเพิ่มสินค้าได้.', 'error');
+    }
+  }
+}
 
 
   }

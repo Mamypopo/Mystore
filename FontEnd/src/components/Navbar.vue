@@ -16,25 +16,41 @@
               <router-link to="/" class="nav-link">HOME</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/products" class="nav-link">Product</router-link>
+              <router-link to="/products" class="nav-link" >Product</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/products/new" class="nav-link">Add Product</router-link>
+              <router-link to="/products/new" class="nav-link" v-if="getUser.role === 'admin'" >Add Product</router-link>
             </li>
-            <li class="nav-item">
-              <router-link to="/history" class="nav-link">history</router-link>
-            </li>
+           
           </ul>
+          
           <ul class="navbar-nav">
-            <li class="nav-item" v-if="!isLoggedIn">
-              <router-link to="/login" class="nav-link">Login</router-link>
+           <!-- แสดง Cart ถ้าผู้ใช้ไม่ใช่ admin -->
+           <li class="nav-item" v-if="getUser.id != 0 && getUser.role !== 'admin'">
+                <router-link to="/cart" class="nav-link">Cart</router-link>
+              </li>
+              <li class="nav-item" v-if="getUser.role === 'admin'">
+                <router-link to="/admin-order-dashboard" class="nav-link">Dashboard</router-link>
+              </li>
+              <li class="nav-item" v-if="getUser.id === 0">
+                <router-link to="/login" class="nav-link">Login</router-link>
+              </li>
+            
+            <li class="nav-item dropdown" v-else>
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              {{ getUser.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu  dropdown-menu-end " aria-labelledby="navbarDropdown">
+            <li class="nav-item" >
+              <router-link to="/user-page" class="nav-link">ข้อมูลส่วนตัว</router-link>
             </li>
-            <li class="nav-item" v-if="isLoggedIn">
-              <router-link to="/cart" class="nav-link">Cart</router-link>
-            </li>
-            <li class="nav-item" v-if="isLoggedIn">
+            <li class="nav-item" >
               <a href="#" class="nav-link" @click.prevent="logout">Logout</a>
             </li>
+             
+            </ul>
+          </li>
           </ul>
         </div>
       </div>
@@ -59,11 +75,11 @@ export default {
   },
   methods: {
     logout() {
-      useUserStore().resetUser()
-      localStorage.removeItem('token');
-      location.reload(); 
-      this.$router.push('/');
-    }
+    const userStore = useUserStore();
+    userStore.resetUser(); // รีเซ็ตสถานะผู้ใช้
+    localStorage.removeItem('token'); // ลบ token
+    this.$router.push('/'); // ส่งกลับไปยังหน้า home
+  },
   }
 }
 </script>
