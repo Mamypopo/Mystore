@@ -2,14 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterForAdmin from '../views/RegisterForAdmin.vue';
-import RegisterForUser from '../views/RegisterForUser.vue';
 import { useUserStore } from '../stores/userStore.js';
-import ProductList from '@/views/ProductList.vue';
-import ProductForm from '@/views/ProductForm.vue';
-import CartPage from '@/views/CartPage.vue';
 import axios from 'axios';
-import UserPage from '@/views/UserPage.vue';
-import AdminOrderDashboard from '@/views/AdminOrderDashboard.vue';
+import CartView from '@/views/CartView.vue';
+import ProductFormView from '@/views/ProductFormView.vue';
+import UserView from '@/views/UserView.vue';
+import AdminOrderDashboardView from '@/views/AdminOrderDashboardView.vue';
+import ProductListView from '@/views/ProductListView.vue';
 const router = createRouter({
     history: createWebHistory(
         import.meta.env.BASE_URL),
@@ -24,11 +23,7 @@ const router = createRouter({
             component: LoginView,
             meta: { requiresGuest: true }
         },
-        {
-            path: '/register-foruser',
-            name: 'register-user',
-            component: RegisterForUser
-        },
+    
         {
             path: '/register-foradmin',
             name: 'register-admin',
@@ -36,38 +31,38 @@ const router = createRouter({
         },
         {
             path: '/products',
-            component: ProductList,
+            component: ProductListView,
             // meta: { requiresAuth: true }
         },
         {
             path: '/products/new',
             name: 'create-product',
-            component: ProductForm,
+            component: ProductFormView,
             meta: { requiresAuth: true }
         },
         {
             path: '/products/edit/:id',
             name: 'edit-product',
-            component: ProductForm,
+            component: ProductFormView,
             props: true
                 // meta: { requiresAuth: true }
         },
         {
             path: '/cart',
             name: 'cart-product',
-            component: CartPage,
+            component: CartView,
             meta: { requiresAuth: true }
         },
     
         {
             path: '/user-page',
             name: 'UserPage',
-            component: UserPage,
+            component: UserView,
           },
           {
             path: '/admin-order-dashboard',
             name: 'AdminPage',
-            component: AdminOrderDashboard,
+            component: AdminOrderDashboardView,
           },
     ]
 });
