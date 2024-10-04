@@ -55,17 +55,17 @@
     All 
     <span v-if="orders.length > 0"></span>
   </button>
-  <button :class="{ active: activeTab === 'delivered' }" @click="activeTab = 'delivered'">
-    Delivered 
-    <span v-if="deliveredOrders.length > 0" class="badge">{{ deliveredOrders.length }}</span>
+  <button :class="{ active: activeTab === 'processing' }" @click="activeTab = 'processing'">
+    Processing 
+    <span v-if="processingOrders.length > 0" class="badge">{{ processingOrders.length }}</span>
   </button>
   <button :class="{ active: activeTab === 'shipped' }" @click="activeTab = 'shipped'">
     Shipped 
     <span v-if="shippedOrders.length > 0" class="badge">{{ shippedOrders.length }}</span>
   </button>
-  <button :class="{ active: activeTab === 'processing' }" @click="activeTab = 'processing'">
-    Processing 
-    <span v-if="processingOrders.length > 0" class="badge">{{ processingOrders.length }}</span>
+  <button :class="{ active: activeTab === 'delivered' }" @click="activeTab = 'delivered'">
+    Delivered 
+    <span v-if="deliveredOrders.length > 0" class="badge">{{ deliveredOrders.length }}</span>
   </button>
 </div>
 
@@ -172,7 +172,7 @@ export default {
       profileImage: null,
       profileImageUrl: '',
       orders: [],
-      activeTab: 'delivered', // กำหนดแท็บเริ่มต้นเป็น 'delivered'
+      activeTab: 'all', // กำหนดแท็บเริ่มต้นเป็น 'delivered'
     };
   },
   computed: {

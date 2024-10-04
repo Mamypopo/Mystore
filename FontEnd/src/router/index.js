@@ -9,6 +9,7 @@ import ProductFormView from '@/views/ProductFormView.vue';
 import UserView from '@/views/UserView.vue';
 import AdminOrderDashboardView from '@/views/AdminOrderDashboardView.vue';
 import ProductListView from '@/views/ProductListView.vue';
+import Swal from 'sweetalert2';
 const router = createRouter({
     history: createWebHistory(
         import.meta.env.BASE_URL),
@@ -96,7 +97,11 @@ router.beforeEach(async(to, from, next) => {
                 if (error.response.data.cause === 'token expired') {
                     localStorage.removeItem('token');
                     useUserStore().resetUser();
-
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'session หมดอายุ',
+                        text: 'กรูณาเข้าสู่ระบบอีกครั้ง',
+                      });
                 }
             }
         }
